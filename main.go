@@ -31,9 +31,14 @@ func main() {
 	routes.SetupAuthRoutes(app)
 	routes.SetupInvoiceRoutes(app)
 
-	// Servir le fichier HTML
+	// Route racine : page de login
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendFile("./public/index.html")
+		return c.SendFile("./public/login.html")
+	})
+
+	// Route dashboard : accessible après connexion
+	app.Get("/dashboard", func(c *fiber.Ctx) error {
+		return c.SendFile("./public/dashboard.html")
 	})
 
 	// Servir les autres fichiers statiques
