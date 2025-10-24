@@ -425,7 +425,7 @@
                     showSuccess('✅ Connexion réussie ! Redirection...');
                     
                     setTimeout(() => {
-                        window.location.href = '/';
+                        window.location.href = '/dashboard';
                     }, 1000);
                 } else {
                     showError(data.error || 'Erreur de connexion');
@@ -473,7 +473,7 @@
                     showSuccess('✅ Compte créé avec succès ! Redirection...');
                     
                     setTimeout(() => {
-                        window.location.href = '/';
+                        window.location.href = '/dashboard';
                     }, 1000);
                 } else {
                     showError(data.error || 'Erreur lors de la création du compte');
@@ -499,7 +499,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/';
+                        window.location.href = '/dashboard';
                     } else {
                         localStorage.removeItem('token');
                     }
