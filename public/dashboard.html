@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greenly - Bilan Carbone Intelligent</title>
+    <title>CarbonTrackr - Bilan Carbone Intelligent</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -464,7 +464,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">
-            🌱 <span>Greenly</span>
+            🌱 <span>CarbonTracker</span>
         </div>
         <div class="menu-item active" onclick="showSection('dashboard')">
             <span class="menu-icon">📊</span>
@@ -511,7 +511,7 @@
             <div class="header">
                 <h1>Bilan carbone</h1>
                 <div class="user-info">
-                    <span id="userEmail">utilisateur@greenly.earth</span>
+                    <span id="userEmail">carbontracker@gmail.com</span>
                     <button class="btn" onclick="document.getElementById('fileInput').click()">+ Nouvelle facture</button>
                     <input type="file" id="fileInput" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" multiple>
                 </div>
@@ -1044,7 +1044,7 @@
 
         // Init
         if (!token) {
-            window.location.href = '/dashboard';
+            window.location.href = '/';
         } else {
             loadDashboard();
         }

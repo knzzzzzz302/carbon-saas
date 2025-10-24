@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greenly - Connexion</title>
+    <title>CarbonTrackr - Connexion</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -244,7 +244,7 @@
     <div class="container">
         <div class="logo-section">
             <div class="logo">🌱</div>
-            <div class="logo-text">Greenly</div>
+            <div class="logo-text">CarbonTrackr 
             <div class="tagline">Bilan Carbone Intelligent avec IA</div>
         </div>
 
@@ -333,7 +333,7 @@
         </div>
 
         <div class="features">
-            <h3>✨ Pourquoi Greenly ?</h3>
+            <h3>✨ Pourquoi CarbonTracker ?</h3>
             <div class="feature-grid">
                 <div class="feature">
                     <div class="feature-icon">🤖</div>
@@ -425,7 +425,7 @@
                     showSuccess('✅ Connexion réussie ! Redirection...');
                     
                     setTimeout(() => {
-                        window.location.href = '/dashboard';
+                        window.location.href = '/dashboard.html';
                     }, 1000);
                 } else {
                     showError(data.error || 'Erreur de connexion');
@@ -473,7 +473,7 @@
                     showSuccess('✅ Compte créé avec succès ! Redirection...');
                     
                     setTimeout(() => {
-                        window.location.href = '/dashboard';
+                        window.location.href = '/dashboard.html';
                     }, 1000);
                 } else {
                     showError(data.error || 'Erreur lors de la création du compte');
@@ -499,7 +499,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/dashboard';
+                        window.location.href = '/dashboard.html';
                     } else {
                         localStorage.removeItem('token');
                     }
