@@ -3,53 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carbon Ledger - Mesurez votre empreinte carbone</title>
+    <title>Greenly - Bilan Carbone Intelligent</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         :root {
             --primary: #10b981;
             --primary-dark: #059669;
             --secondary: #3b82f6;
-            --dark: #1f2937;
+            --dark: #0f2e1f;
             --gray: #6b7280;
             --light-gray: #f3f4f6;
             --white: #ffffff;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --sidebar-width: 240px;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #0a1f14;
+            color: var(--white);
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Navigation */
-        nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #0f2e1f;
+            border-right: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 2rem 0;
+            z-index: 1000;
         }
 
         .logo {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -58,568 +50,888 @@
             color: var(--primary);
         }
 
-        .logo svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .nav-links {
+        .menu-item {
+            padding: 0.8rem 1.5rem;
             display: flex;
-            gap: 1rem;
             align-items: center;
-        }
-
-        .btn {
-            padding: 0.6rem 1.5rem;
-            border: none;
-            border-radius: 8px;
+            gap: 12px;
             cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            transition: all 0.2s;
+            color: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid transparent;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
+        .menu-item:hover, .menu-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--primary);
+            color: var(--white);
         }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--dark);
-            border: 2px solid var(--light-gray);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
+        .menu-icon { width: 20px; height: 20px; }
 
         /* Main Content */
         .main-content {
-            display: none;
-        }
-
-        .main-content.active {
-            display: block;
-        }
-
-        /* Auth Screen */
-        .auth-container {
-            max-width: 450px;
-            margin: 4rem auto;
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .auth-header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
-
-        .auth-header p {
-            color: var(--gray);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-            font-weight: 500;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .auth-toggle {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--gray);
-        }
-
-        .auth-toggle a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* Dashboard */
-        .dashboard {
-            background: white;
-            border-radius: 20px;
+            margin-left: var(--sidebar-width);
             padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         }
 
-        .dashboard-header {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-gray);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .dashboard-header h1 {
-            font-size: 2rem;
-            color: var(--dark);
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
         }
 
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
             padding: 1.5rem;
-            border-radius: 15px;
-            color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h3 {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card .value {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        .stat-card.blue {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        }
-
-        .stat-card.orange {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-
-        /* Upload Section */
-        .upload-section {
-            background: var(--light-gray);
-            border: 3px dashed var(--gray);
-            border-radius: 15px;
-            padding: 3rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .upload-section:hover {
-            border-color: var(--primary);
-            background: #e0f2fe;
-        }
-
-        .upload-section.dragging {
-            border-color: var(--primary);
-            background: #d1fae5;
-        }
-
-        .upload-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 1rem;
-            color: var(--gray);
-        }
-
-        .upload-section h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .upload-section p {
-            color: var(--gray);
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        /* Invoices Table */
-        .invoices-section h2 {
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-
-        .invoices-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
+            border-radius: 12px;
+            position: relative;
             overflow: hidden;
         }
 
-        .invoices-table thead {
-            background: var(--light-gray);
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
         }
 
-        .invoices-table th,
-        .invoices-table td {
-            padding: 1rem;
-            text-align: left;
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
         }
 
-        .invoices-table th {
+        .stat-title {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stat-badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
-            color: var(--dark);
         }
 
-        .invoices-table tbody tr {
-            border-bottom: 1px solid var(--light-gray);
-            transition: background 0.2s;
+        .badge-up { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .badge-down { background: rgba(16, 185, 129, 0.2); color: var(--primary); }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--white);
+            margin-bottom: 0.3rem;
         }
 
-        .invoices-table tbody tr:hover {
-            background: var(--light-gray);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
+        .stat-subtitle {
             font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Charts Container */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(15, 46, 31, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
-        .badge-success {
-            background: #d1fae5;
+        .chart-canvas {
+            width: 100%;
+            height: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Suppliers Table */
+        .suppliers-section {
+            background: rgba(15, 46, 31, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .suppliers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .suppliers-table th {
+            text-align: left;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .suppliers-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .supplier-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .supplier-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .grade {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .grade-a { background: rgba(16, 185, 129, 0.2); color: var(--primary); }
+        .grade-b { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .grade-d { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        /* AI Chat */
+        .ai-chat {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 400px;
+            height: 500px;
+            background: rgba(15, 46, 31, 0.95);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+            transition: all 0.3s;
+        }
+
+        .ai-chat.minimized {
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .ai-header {
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.2);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .ai-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .ai-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .ai-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ai-message {
+            padding: 0.8rem;
+            border-radius: 12px;
+            max-width: 85%;
+            line-height: 1.5;
+        }
+
+        .ai-message.user {
+            background: rgba(16, 185, 129, 0.2);
+            align-self: flex-end;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .ai-message.assistant {
+            background: rgba(59, 130, 246, 0.2);
+            align-self: flex-start;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .ai-input-container {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 0.9rem;
+        }
+
+        .ai-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            padding: 0.8rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Calculateur */
+        .calculator-section {
+            background: rgba(15, 46, 31, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .calc-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .calc-input-group label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .calc-input {
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--white);
+        }
+
+        select.calc-input {
+            cursor: pointer;
+        }
+
+        .calc-result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+        }
+
+        .calc-result-value {
+            font-size: 2rem;
+            font-weight: bold;
             color: var(--primary);
-        }
-
-        .badge-warning {
-            background: #fed7aa;
-            color: var(--warning);
-        }
-
-        .badge-danger {
-            background: #fee2e2;
-            color: var(--danger);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray);
-        }
-
-        .empty-state svg {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 1rem;
-            opacity: 0.3;
+            margin-bottom: 0.5rem;
         }
 
         .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .spinner {
-            border: 4px solid var(--light-gray);
-            border-top: 4px solid var(--primary);
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            border-top-color: var(--primary);
             animation: spin 1s linear infinite;
-            margin: 0 auto;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .ai-chat { width: 90%; right: 5%; }
         }
 
-        .alert-success {
-            background: #d1fae5;
-            color: var(--primary-dark);
-        }
-
-        .alert-error {
-            background: #fee2e2;
-            color: var(--danger);
-        }
+        /* Hide sections */
+        .section { display: none; }
+        .section.active { display: block; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Navigation -->
-        <nav id="navbar" style="display: none;">
-            <div class="logo">
-                <svg fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM10 15a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zM10 7a3 3 0 100 6 3 3 0 000-6zM15.657 5.404a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM6.464 14.596a.75.75 0 10-1.06-1.06l-1.06 1.06a.75.75 0 001.06 1.06l1.06-1.06zM18 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0118 10zM5 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 015 10zM14.596 15.657a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06zM5.404 6.464a.75.75 0 001.06-1.06l-1.06-1.06a.75.75 0 10-1.061 1.06l1.06 1.06z" />
-                </svg>
-                <span>Carbon Ledger</span>
-            </div>
-            <div class="nav-links">
-                <span id="userEmail" style="color: var(--gray); margin-right: 1rem;"></span>
-                <button class="btn btn-secondary" onclick="logout()">Déconnexion</button>
-            </div>
-        </nav>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            🌱 <span>Greenly</span>
+        </div>
+        <div class="menu-item active" onclick="showSection('dashboard')">
+            <span class="menu-icon">📊</span>
+            <span>Tableau de bord</span>
+        </div>
+        <div class="menu-item" onclick="showSection('data')">
+            <span class="menu-icon">📁</span>
+            <span>Données</span>
+        </div>
+        <div class="menu-item" onclick="showSection('analysis')">
+            <span class="menu-icon">📈</span>
+            <span>Analyses</span>
+        </div>
+        <div class="menu-item" onclick="showSection('suppliers')">
+            <span class="menu-icon">🏭</span>
+            <span>Fournisseurs</span>
+        </div>
+        <div class="menu-item" onclick="showSection('calculator')">
+            <span class="menu-icon">🧮</span>
+            <span>Calculateur</span>
+        </div>
+        <div class="menu-item" onclick="showSection('compliance')">
+            <span class="menu-icon">✓</span>
+            <span>Compliance</span>
+        </div>
+        <div class="menu-item" onclick="showSection('export')">
+            <span class="menu-icon">📤</span>
+            <span>Export</span>
+        </div>
+        <div class="menu-item" onclick="showSection('settings')">
+            <span class="menu-icon">⚙️</span>
+            <span>Paramètres</span>
+        </div>
+        <div class="menu-item" onclick="logout()" style="margin-top: auto; color: var(--danger);">
+            <span class="menu-icon">🚪</span>
+            <span>Déconnexion</span>
+        </div>
+    </div>
 
-        <!-- Auth Screen -->
-        <div id="authScreen" class="main-content active">
-            <div class="auth-container">
-                <div class="auth-header">
-                    <h1>🌱 Carbon Ledger</h1>
-                    <p id="authSubtitle">Mesurez et réduisez votre empreinte carbone</p>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <div class="header">
+                <h1>Bilan carbone</h1>
+                <div class="user-info">
+                    <span id="userEmail">utilisateur@greenly.earth</span>
+                    <button class="btn" onclick="document.getElementById('fileInput').click()">+ Nouvelle facture</button>
+                    <input type="file" id="fileInput" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" multiple>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Total des émissions</span>
+                        <span class="stat-badge badge-up">↑ 12%</span>
+                    </div>
+                    <div class="stat-value"><span id="totalCO2">27</span> tCO₂e</div>
+                    <div class="stat-subtitle">Depuis le début de l'année</div>
                 </div>
 
-                <div id="alertContainer"></div>
-
-                <form id="authForm">
-                    <div class="form-group" id="nameGroup" style="display: none;">
-                        <label for="name">Nom complet</label>
-                        <input type="text" id="name" placeholder="Jean Dupont">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Émissions évitées</span>
+                        <span class="stat-badge badge-down">↓ 8%</span>
                     </div>
-
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" placeholder="vous@entreprise.com" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Mot de passe</label>
-                        <input type="password" id="password" placeholder="••••••••" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="authButton">
-                        Se connecter
-                    </button>
-                </form>
-
-                <div class="auth-toggle">
-                    <span id="authToggleText">Pas encore de compte ?</span>
-                    <a href="#" onclick="toggleAuthMode(); return false;" id="authToggleLink">S'inscrire</a>
+                    <div class="stat-value"><span id="avoidedCO2">4</span> tCO₂e</div>
+                    <div class="stat-subtitle">Grâce aux actions mises en place</div>
                 </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Émissions par employé</span>
+                        <span class="stat-badge badge-down">↓ 5%</span>
+                    </div>
+                    <div class="stat-value"><span id="perEmployee">1.1</span> tCO₂e</div>
+                    <div class="stat-subtitle">Moyenne de l'entreprise</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Factures analysées</span>
+                    </div>
+                    <div class="stat-value" id="totalInvoices">0</div>
+                    <div class="stat-subtitle">Ce mois-ci</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Répartition</h3>
+                        <select class="calc-input" style="width: auto; padding: 0.5rem;">
+                            <option>Par catégorie</option>
+                            <option>Par fournisseur</option>
+                            <option>Par mois</option>
+                        </select>
+                    </div>
+                    <canvas id="repartitionChart" class="chart-canvas">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">📊</div>
+                            <div>Graphique circulaire des émissions</div>
+                        </div>
+                    </canvas>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Émissions par fournisseur</h3>
+                    </div>
+                    <div id="supplierBreakdown" style="padding: 1rem 0;">
+                        <!-- Sera rempli dynamiquement -->
+                    </div>
+                </div>
+
+                <div class="chart-card" style="grid-column: 1 / -1;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Évolution</h3>
+                        <select class="calc-input" style="width: auto; padding: 0.5rem;">
+                            <option>12 derniers mois</option>
+                            <option>6 derniers mois</option>
+                            <option>3 derniers mois</option>
+                        </select>
+                    </div>
+                    <canvas id="evolutionChart" class="chart-canvas" style="height: 200px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">📈</div>
+                            <div>Graphique d'évolution temporelle</div>
+                        </div>
+                    </canvas>
+                </div>
+            </div>
+
+            <!-- Suppliers Table -->
+            <div class="suppliers-section">
+                <div class="chart-header">
+                    <h3 class="chart-title">Émissions par fournisseur</h3>
+                    <span style="color: rgba(255,255,255,0.5);">Émission en kgCO₂e par employé</span>
+                </div>
+                <table class="suppliers-table" id="suppliersTable">
+                    <thead>
+                        <tr>
+                            <th>Fournisseur</th>
+                            <th>Catégorie</th>
+                            <th>Émissions</th>
+                            <th>Note</th>
+                            <th>Action IA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="supplier-name">
+                                    <div class="supplier-icon" style="background: #10b981;">E</div>
+                                    <span>EDF</span>
+                                </div>
+                            </td>
+                            <td>Électricité</td>
+                            <td><strong>850 kg</strong> CO₂e</td>
+                            <td><span class="grade grade-a">A+</span></td>
+                            <td><button class="btn btn-icon" onclick="analyzeSupplier('EDF')">🤖 Analyser</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="supplier-name">
+                                    <div class="supplier-icon" style="background: #f59e0b;">E</div>
+                                    <span>Engie</span>
+                                </div>
+                            </td>
+                            <td>Gaz</td>
+                            <td><strong>1200 kg</strong> CO₂e</td>
+                            <td><span class="grade grade-b">B</span></td>
+                            <td><button class="btn btn-icon" onclick="analyzeSupplier('Engie')">🤖 Analyser</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Dashboard Screen -->
-        <div id="dashboardScreen" class="main-content">
-            <div class="dashboard">
-                <div class="dashboard-header">
-                    <h1>📊 Tableau de bord</h1>
+        <!-- Calculator Section -->
+        <div id="calculator" class="section">
+            <div class="header">
+                <h1>Calculateur d'empreinte carbone</h1>
+            </div>
+
+            <div class="calculator-section">
+                <h3 class="chart-title" style="margin-bottom: 1rem;">Calculer vos émissions</h3>
+                
+                <div class="calculator-grid">
+                    <div class="calc-input-group">
+                        <label>Catégorie</label>
+                        <select class="calc-input" id="calcCategory">
+                            <option value="electricity">Électricité</option>
+                            <option value="gas">Gaz naturel</option>
+                            <option value="transport">Transport</option>
+                            <option value="food">Alimentation</option>
+                        </select>
+                    </div>
+
+                    <div class="calc-input-group">
+                        <label>Consommation</label>
+                        <input type="number" class="calc-input" id="calcConsumption" placeholder="Quantité">
+                    </div>
+
+                    <div class="calc-input-group">
+                        <label>Unité</label>
+                        <select class="calc-input" id="calcUnit">
+                            <option value="kWh">kWh</option>
+                            <option value="m3">m³</option>
+                            <option value="km">km</option>
+                            <option value="kg">kg</option>
+                        </select>
+                    </div>
+
+                    <div class="calc-input-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn" onclick="calculateFootprint()" style="width: 100%;">Calculer</button>
+                    </div>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Émissions totales</h3>
-                        <div class="value"><span id="totalCO2">0</span> kg CO₂</div>
-                    </div>
-                    <div class="stat-card blue">
-                        <h3>Factures analysées</h3>
-                        <div class="value" id="totalInvoices">0</div>
-                    </div>
-                    <div class="stat-card orange">
-                        <h3>Montant total</h3>
-                        <div class="value"><span id="totalAmount">0</span> €</div>
-                    </div>
+                <div id="calcResult" style="display: none;" class="calc-result">
+                    <div class="calc-result-value"><span id="calcCO2Value">0</span> kg CO₂e</div>
+                    <div id="calcDetails" style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;"></div>
+                    <div id="calcAdvice" style="padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);"></div>
                 </div>
+            </div>
 
-                <div class="upload-section" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-                    <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <h3>Déposez vos factures ici</h3>
-                    <p>ou cliquez pour sélectionner des fichiers (PDF, PNG, JPG)</p>
-                    <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" multiple>
-                </div>
+            <!-- Recommandations IA -->
+            <div class="suppliers-section">
+                <h3 class="chart-title">Recommandations personnalisées</h3>
+                <button class="btn" onclick="getAIRecommendations()" style="margin-top: 1rem;">
+                    <span id="recoBtn">🤖 Obtenir des recommandations IA</span>
+                </button>
+                <div id="recommendations" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
 
-                <div id="uploadStatus"></div>
+        <!-- Data Section -->
+        <div id="data" class="section">
+            <div class="header">
+                <h1>Mes données</h1>
+                <button class="btn" onclick="document.getElementById('fileInput').click()">+ Ajouter une facture</button>
+            </div>
 
-                <div class="invoices-section">
-                    <h2>📄 Factures récentes</h2>
-                    <div id="invoicesList">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p>Chargement...</p>
-                        </div>
+            <div class="suppliers-section">
+                <h3 class="chart-title">Factures récentes</h3>
+                <div id="invoicesList" style="margin-top: 1rem;">
+                    <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+                        <div>Aucune facture. Commencez par en télécharger une.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- AI Chat Assistant -->
+    <div class="ai-chat" id="aiChat">
+        <div class="ai-header" onclick="toggleAIChat()">
+            <div class="ai-title">
+                <span class="ai-status"></span>
+                <span>🤖 Assistant Écologie IA</span>
+            </div>
+            <span id="aiToggle">−</span>
+        </div>
+        <div class="ai-messages" id="aiMessages">
+            <div class="ai-message assistant">
+                👋 Bonjour ! Je suis votre expert en écologie et bilan carbone. 
+                Je peux vous aider à :
+                <br>• Analyser vos factures en détail
+                <br>• Calculer votre empreinte carbone précise
+                <br>• Vous recommander des actions concrètes
+                <br>• Chiffrer les économies potentielles
+                <br><br>
+                Comment puis-je vous aider aujourd'hui ?
+            </div>
+        </div>
+        <div class="ai-input-container">
+            <input type="text" class="ai-input" id="aiInput" placeholder="Posez votre question..." onkeypress="if(event.key==='Enter') sendAIMessage()">
+            <button class="btn" onclick="sendAIMessage()">Envoyer</button>
+        </div>
+    </div>
+
     <script>
-        const API_URL = window.location.origin; // Utilise automatiquement le bon domaine
+        const API_URL = window.location.origin;
         let token = localStorage.getItem('token');
-        let isLoginMode = true;
+        let currentSection = 'dashboard';
 
-        // Initialize app
-        if (token) {
-            showDashboard();
+        // Navigation
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            
+            document.getElementById(section).classList.add('active');
+            event.target.closest('.menu-item').classList.add('active');
+            currentSection = section;
+
+            if (section === 'dashboard') loadDashboard();
+            if (section === 'data') loadInvoicesList();
         }
 
-        // Auth mode toggle
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            const nameGroup = document.getElementById('nameGroup');
-            const authButton = document.getElementById('authButton');
-            const authSubtitle = document.getElementById('authSubtitle');
-            const authToggleText = document.getElementById('authToggleText');
-            const authToggleLink = document.getElementById('authToggleLink');
-
-            if (isLoginMode) {
-                nameGroup.style.display = 'none';
-                authButton.textContent = 'Se connecter';
-                authSubtitle.textContent = 'Mesurez et réduisez votre empreinte carbone';
-                authToggleText.textContent = 'Pas encore de compte ?';
-                authToggleLink.textContent = 'S\'inscrire';
-            } else {
-                nameGroup.style.display = 'block';
-                authButton.textContent = 'Créer un compte';
-                authSubtitle.textContent = 'Rejoignez-nous pour un avenir plus vert';
-                authToggleText.textContent = 'Déjà un compte ?';
-                authToggleLink.textContent = 'Se connecter';
-            }
+        // AI Chat
+        function toggleAIChat() {
+            const chat = document.getElementById('aiChat');
+            const toggle = document.getElementById('aiToggle');
+            chat.classList.toggle('minimized');
+            toggle.textContent = chat.classList.contains('minimized') ? '+' : '−';
         }
 
-        // Auth form submit
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const name = document.getElementById('name').value;
+        async function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            if (!message) return;
 
-            const endpoint = isLoginMode ? '/auth/login' : '/auth/register';
-            const payload = isLoginMode ? { email, password } : { name, email, password };
+            const messagesDiv = document.getElementById('aiMessages');
+            
+            // Ajouter le message utilisateur
+            messagesDiv.innerHTML += `<div class="ai-message user">${message}</div>`;
+            input.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Ajouter un loader
+            messagesDiv.innerHTML += `<div class="ai-message assistant" id="aiLoader"><span class="loading"></span> L'IA réfléchit...</div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
             try {
-                const res = await fetch(API_URL + endpoint, {
+                const res = await fetch(API_URL + '/ai/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ message, context: '' })
                 });
 
                 const data = await res.json();
+                document.getElementById('aiLoader').remove();
 
-                if (!res.ok) {
-                    showAlert(data.error || 'Erreur', 'error');
-                    return;
-                }
-
-                token = data.token;
-                localStorage.setItem('token', token);
-                showAlert(isLoginMode ? 'Connexion réussie !' : 'Compte créé !', 'success');
-                setTimeout(() => showDashboard(), 1000);
+                messagesDiv.innerHTML += `<div class="ai-message assistant">${data.response.replace(/\n/g, '<br>')}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             } catch (err) {
-                showAlert('Erreur de connexion au serveur', 'error');
+                document.getElementById('aiLoader').remove();
+                messagesDiv.innerHTML += `<div class="ai-message assistant" style="color: var(--danger);">❌ Erreur de connexion à l'IA</div>`;
             }
-        });
-
-        function showAlert(message, type) {
-            const container = document.getElementById('alertContainer');
-            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => container.innerHTML = '', 3000);
         }
 
-        function logout() {
-            localStorage.removeItem('token');
-            token = null;
-            document.getElementById('dashboardScreen').classList.remove('active');
-            document.getElementById('authScreen').classList.add('active');
-            document.getElementById('navbar').style.display = 'none';
-        }
+        // Calculator
+        async function calculateFootprint() {
+            const category = document.getElementById('calcCategory').value;
+            const consumption = parseFloat(document.getElementById('calcConsumption').value);
+            const unit = document.getElementById('calcUnit').value;
 
-        function showDashboard() {
-            document.getElementById('authScreen').classList.remove('active');
-            document.getElementById('dashboardScreen').classList.add('active');
-            document.getElementById('navbar').style.display = 'flex';
-            loadInvoices();
-        }
+            if (!consumption || consumption <= 0) {
+                alert('Veuillez entrer une consommation valide');
+                return;
+            }
 
-        // File upload
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-            Array.from(e.target.files).forEach(uploadFile);
-        });
-
-        const uploadZone = document.getElementById('uploadZone');
-        uploadZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadZone.classList.add('dragging');
-        });
-        uploadZone.addEventListener('dragleave', () => {
-            uploadZone.classList.remove('dragging');
-        });
-        uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragging');
-            Array.from(e.dataTransfer.files).forEach(uploadFile);
-        });
-
-        async function uploadFile(file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            const statusDiv = document.getElementById('uploadStatus');
-            statusDiv.innerHTML = `<div class="loading"><div class="spinner"></div><p>Analyse en cours de ${file.name}...</p></div>`;
+            const resultDiv = document.getElementById('calcResult');
+            resultDiv.style.display = 'block';
+            document.getElementById('calcCO2Value').innerHTML = '<span class="loading"></span>';
 
             try {
-                const res = await fetch(API_URL + '/invoices/upload', {
+                const res = await fetch(API_URL + '/ai/calculate-footprint', {
                     method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + token },
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ category, consumption, unit })
                 });
 
                 const data = await res.json();
-
-                if (!res.ok) {
-                    statusDiv.innerHTML = `<div class="alert alert-error">Erreur: ${data.error}</div>`;
-                    return;
-                }
-
-                statusDiv.innerHTML = `<div class="alert alert-success">✅ ${file.name} analysée avec succès ! CO₂: ${data.co2_estimate} kg</div>`;
-                setTimeout(() => statusDiv.innerHTML = '', 3000);
-                loadInvoices();
+                
+                document.getElementById('calcCO2Value').textContent = data.co2_emissions.toFixed(2);
+                document.getElementById('calcDetails').innerHTML = `
+                    <strong>Calcul :</strong> ${data.calculation}<br>
+                    <strong>Équivalences :</strong><br>
+                    • ${data.equivalents.trees.toFixed(1)} arbres nécessaires pour absorber<br>
+                    • ${data.equivalents.km_car.toFixed(0)} km en voiture<br>
+                    • ${(data.equivalents.flights * 100).toFixed(1)}% d'un vol Paris-Londres
+                `;
+                document.getElementById('calcAdvice').innerHTML = '<strong>Conseils :</strong><br>' + data.advice.replace(/\n/g, '<br>');
             } catch (err) {
-                statusDiv.innerHTML = `<div class="alert alert-error">Erreur lors de l'upload</div>`;
+                alert('Erreur lors du calcul');
+                resultDiv.style.display = 'none';
             }
         }
 
-        async function loadInvoices() {
+        // AI Recommendations
+        async function getAIRecommendations() {
+            const recoBtn = document.getElementById('recoBtn');
+            const recoDiv = document.getElementById('recommendations');
+            
+            recoBtn.innerHTML = '<span class="loading"></span> Génération des recommandations...';
+
+            try {
+                const res = await fetch(API_URL + '/ai/recommendations', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+
+                const data = await res.json();
+                recoBtn.innerHTML = '🤖 Obtenir des recommandations IA';
+
+                if (data.recommendations && data.recommendations.length > 0) {
+                    let html = '<div style="display: grid; gap: 1rem; margin-top: 1rem;">';
+                    data.recommendations.forEach((rec, i) => {
+                        html += `
+                            <div style="padding: 1.5rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                    <strong style="font-size: 1.1rem;">${i + 1}. ${rec.action}</strong>
+                                    <span class="stat-badge badge-down">${rec.difficulty}</span>
+                                </div>
+                                <div style="color: rgba(255,255,255,0.7); margin: 0.5rem 0;">
+                                    💰 Économie : ${rec.savings} €/an | 🌱 Réduction CO2 : ${rec.co2_impact} kg/an
+                                </div>
+                                <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+                                    ⏱️ ROI : ${rec.roi}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    recoDiv.innerHTML = html;
+                } else {
+                    recoDiv.innerHTML = '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">Téléchargez des factures pour obtenir des recommandations personnalisées</div>';
+                }
+            } catch (err) {
+                recoBtn.innerHTML = '🤖 Obtenir des recommandations IA';
+                alert('Erreur lors de la génération des recommandations');
+            }
+        }
+
+        // Analyze Supplier
+        async function analyzeSupplier(name) {
+            const messagesDiv = document.getElementById('aiMessages');
+            document.getElementById('aiChat').classList.remove('minimized');
+            
+            messagesDiv.innerHTML += `<div class="ai-message assistant"><span class="loading"></span> Analyse de ${name} en cours...</div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const res = await fetch(API_URL + '/ai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ 
+                        message: `Analyse détaillée du fournisseur ${name} : leur impact carbone, des alternatives plus vertes, et des recommandations concrètes pour réduire mes émissions liées à ce fournisseur.`,
+                        context: '' 
+                    })
+                });
+
+                const data = await res.json();
+                messagesDiv.lastChild.remove();
+                messagesDiv.innerHTML += `<div class="ai-message assistant"><strong>Analyse ${name}</strong><br><br>${data.response.replace(/\n/g, '<br>')}</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (err) {
+                messagesDiv.lastChild.remove();
+                messagesDiv.innerHTML += `<div class="ai-message assistant" style="color: var(--danger);">❌ Erreur d'analyse</div>`;
+            }
+        }
+
+        // Load Dashboard
+        async function loadDashboard() {
             try {
                 const res = await fetch(API_URL + '/invoices', {
                     headers: { 'Authorization': 'Bearer ' + token }
@@ -627,63 +939,114 @@
                 const data = await res.json();
 
                 if (data.invoices && data.invoices.length > 0) {
-                    displayInvoices(data.invoices);
-                    updateStats(data.invoices);
-                } else {
-                    document.getElementById('invoicesList').innerHTML = `
-                        <div class="empty-state">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <h3>Aucune facture pour le moment</h3>
-                            <p>Commencez par télécharger votre première facture</p>
+                    const totalCO2 = data.invoices.reduce((sum, inv) => sum + inv.co2_estimate, 0);
+                    const totalAmount = data.invoices.reduce((sum, inv) => sum + inv.total_amount, 0);
+                    
+                    document.getElementById('totalCO2').textContent = (totalCO2 / 1000).toFixed(1);
+                    document.getElementById('totalInvoices').textContent = data.invoices.length;
+                    document.getElementById('avoidedCO2').textContent = (totalCO2 * 0.15 / 1000).toFixed(1);
+                    document.getElementById('perEmployee').textContent = (totalCO2 / 1000 / 25).toFixed(2);
+
+                    // Update supplier breakdown
+                    updateSupplierBreakdown(data.invoices);
+                }
+            } catch (err) {
+                console.error('Erreur chargement dashboard:', err);
+            }
+        }
+
+        function updateSupplierBreakdown(invoices) {
+            const categories = {};
+            invoices.forEach(inv => {
+                const cat = inv.total_amount > 200 ? 'Électricité' : inv.total_amount > 100 ? 'Gaz' : 'Autres';
+                categories[cat] = (categories[cat] || 0) + inv.co2_estimate;
+            });
+
+            let html = '';
+            Object.entries(categories).forEach(([cat, co2]) => {
+                const percent = (co2 / invoices.reduce((s, i) => s + i.co2_estimate, 0) * 100).toFixed(1);
+                html += `
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                            <span>${cat}</span>
+                            <strong>${co2.toFixed(0)} kg CO₂</strong>
                         </div>
-                    `;
+                        <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="background: var(--primary); height: 100%; width: ${percent}%; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('supplierBreakdown').innerHTML = html;
+        }
+
+        // Load Invoices List
+        async function loadInvoicesList() {
+            try {
+                const res = await fetch(API_URL + '/invoices', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json();
+
+                if (data.invoices && data.invoices.length > 0) {
+                    let html = '<table class="suppliers-table"><thead><tr><th>Fichier</th><th>Date</th><th>Montant</th><th>CO₂</th><th>Action</th></tr></thead><tbody>';
+                    data.invoices.forEach(inv => {
+                        html += `
+                            <tr>
+                                <td><strong>${inv.original_name || inv.file_name}</strong></td>
+                                <td>${new Date(inv.CreatedAt).toLocaleDateString('fr-FR')}</td>
+                                <td>${inv.total_amount.toFixed(2)} €</td>
+                                <td><strong>${inv.co2_estimate.toFixed(2)} kg</strong></td>
+                                <td><button class="btn btn-icon" onclick="analyzeInvoiceWithAI(${inv.ID})">🤖 Analyser</button></td>
+                            </tr>
+                        `;
+                    });
+                    html += '</tbody></table>';
+                    document.getElementById('invoicesList').innerHTML = html;
                 }
             } catch (err) {
                 console.error(err);
             }
         }
 
-        function displayInvoices(invoices) {
-            const html = `
-                <table class="invoices-table">
-                    <thead>
-                        <tr>
-                            <th>Fichier</th>
-                            <th>Date</th>
-                            <th>Montant</th>
-                            <th>CO₂ estimé</th>
-                            <th>Statut</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${invoices.map(inv => `
-                            <tr>
-                                <td><strong>${inv.original_name || inv.file_name}</strong></td>
-                                <td>${new Date(inv.CreatedAt).toLocaleDateString('fr-FR')}</td>
-                                <td>${inv.total_amount.toFixed(2)} €</td>
-                                <td><strong>${inv.co2_estimate.toFixed(2)} kg CO₂</strong></td>
-                                <td>
-                                    ${inv.co2_estimate < 10 ? '<span class="badge badge-success">Faible</span>' : 
-                                      inv.co2_estimate < 50 ? '<span class="badge badge-warning">Moyen</span>' : 
-                                      '<span class="badge badge-danger">Élevé</span>'}
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            document.getElementById('invoicesList').innerHTML = html;
+        async function analyzeInvoiceWithAI(invoiceId) {
+            alert('Analyse IA de la facture #' + invoiceId + ' en cours...\n\nCette fonctionnalité nécessite l\'OCR et l\'API OpenAI configurée.');
         }
 
-        function updateStats(invoices) {
-            const totalCO2 = invoices.reduce((sum, inv) => sum + inv.co2_estimate, 0);
-            const totalAmount = invoices.reduce((sum, inv) => sum + inv.total_amount, 0);
-            
-            document.getElementById('totalCO2').textContent = totalCO2.toFixed(2);
-            document.getElementById('totalInvoices').textContent = invoices.length;
-            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+        // File Upload
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            for (const file of e.target.files) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const res = await fetch(API_URL + '/invoices/upload', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token },
+                        body: formData
+                    });
+
+                    if (res.ok) {
+                        alert(`✅ ${file.name} analysée avec succès !`);
+                        loadDashboard();
+                        if (currentSection === 'data') loadInvoicesList();
+                    }
+                } catch (err) {
+                    alert(`❌ Erreur lors de l'upload de ${file.name}`);
+                }
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.reload();
+        }
+
+        // Init
+        if (!token) {
+            window.location.href = '/';
+        } else {
+            loadDashboard();
         }
     </script>
 </body>
