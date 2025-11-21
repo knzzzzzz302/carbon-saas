@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/datatypes"
+	"gorm.io/gorm"
 )
 
 func SetupAuthRoutes(app *fiber.App) {
@@ -22,6 +25,9 @@ type authPayload struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	Company  string `json:"company"`
+	Locale   string `json:"locale"`
+	Timezone string `json:"timezone"`
 }
 
 func register(c *fiber.Ctx) error {
@@ -42,24 +48,57 @@ func register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Impossible de hasher le mot de passe"})
 	}
 
+	orgName := body.Company
+	if orgName == "" {
+		orgName = body.Name + " Org"
+	}
+	tenant := models.Tenant{
+		Name:         orgName,
+		Slug:         utils.GenerateSlug(orgName),
+		Plan:         models.TenantPlanStarter,
+		Status:       "active",
+		FeatureFlags: datatypes.JSONMap{},
+		Metadata:     datatypes.JSONMap{},
+	}
+
+	if err := database.DB.Create(&tenant).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Erreur création tenant"})
+	}
+
 	user := models.User{
-		Name:     body.Name,
-		Email:    body.Email,
-		Password: hash,
+		Name:            body.Name,
+		Email:           body.Email,
+		Password:        hash,
+		DefaultTenantID: tenant.ID,
+		Locale:          body.Locale,
+		Timezone:        body.Timezone,
 	}
 
 	if err := database.DB.Create(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Erreur création utilisateur"})
 	}
 
-	// génération JWT
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
-		"exp":     time.Now().Add(24 * time.Hour).Unix(),
-	})
-	t, _ := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	membership := models.Membership{
+		TenantID: tenant.ID,
+		UserID:   user.ID,
+		Role:     models.RoleAdmin,
+		Status:   "active",
+	}
+	if err := database.DB.Create(&membership).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Erreur création membership"})
+	}
 
-	return c.JSON(fiber.Map{"token": t})
+	// génération JWT
+	t, err := issueSessionToken(user, membership)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Token invalide"})
+	}
+
+	return c.JSON(fiber.Map{
+		"token":  t,
+		"tenant": tenant,
+		"role":   membership.Role,
+	})
 }
 
 func login(c *fiber.Ctx) error {
@@ -74,11 +113,47 @@ func login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Email ou mot de passe invalide"})
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
-		"exp":     time.Now().Add(24 * time.Hour).Unix(),
-	})
-	t, _ := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	membership, err := resolveDefaultMembership(user)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+	}
 
-	return c.JSON(fiber.Map{"token": t})
+	t, err := issueSessionToken(user, membership)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Token invalide"})
+	}
+
+	return c.JSON(fiber.Map{
+		"token":  t,
+		"role":   membership.Role,
+		"tenant": membership.Tenant,
+	})
+}
+
+func issueSessionToken(user models.User, membership models.Membership) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id":   user.ID,
+		"tenant_id": membership.TenantID,
+		"role":      membership.Role,
+		"exp":       time.Now().Add(24 * time.Hour).Unix(),
+	})
+	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+}
+
+func resolveDefaultMembership(user models.User) (models.Membership, error) {
+	var membership models.Membership
+	query := database.DB.Preload("Tenant")
+	if user.DefaultTenantID != 0 {
+		query = query.Where("tenant_id = ? AND user_id = ?", user.DefaultTenantID, user.ID)
+	} else {
+		query = query.Where("user_id = ?", user.ID)
+	}
+
+	if err := query.First(&membership).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return membership, errors.New("Aucun tenant associé")
+		}
+		return membership, err
+	}
+	return membership, nil
 }

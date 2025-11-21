@@ -3,9 +3,12 @@ package database
 import (
 	"log"
 	"os"
+	"strings"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"carbon-saas/models"
 )
@@ -13,21 +16,38 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() {
-	dbPath := os.Getenv("DATABASE_URL")
-	if dbPath == "" {
-		dbPath = "carbon.db"
+	dsn := os.Getenv("DATABASE_URL")
+	var dialector gorm.Dialector
+
+	switch {
+	case strings.HasPrefix(dsn, "postgres://") || strings.HasPrefix(dsn, "postgresql://"):
+		dialector = postgres.Open(dsn)
+	case dsn != "":
+		// Assume postgres DSN even without schema prefix
+		dialector = postgres.Open(dsn)
+	default:
+		dbPath := "carbon.db"
+		dialector = sqlite.Open(dbPath)
+		dsn = dbPath
 	}
 
-	database, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+	database, err := gorm.Open(dialector, &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Warn),
+	})
 	if err != nil {
 		log.Fatal("Erreur connexion DB:", err)
 	}
 
-	// AutoMigrate : crée/ajuste les tables selon les modèles
-	if err := database.AutoMigrate(&models.User{}, &models.Invoice{}); err != nil {
+	if err := database.AutoMigrate(
+		&models.Tenant{},
+		&models.User{},
+		&models.Membership{},
+		&models.ServiceAccount{},
+		&models.Invoice{},
+	); err != nil {
 		log.Fatal("Erreur migration:", err)
 	}
 
 	DB = database
-	log.Println("📦 DB connectée et migrée")
+	log.Println("📦 DB connectée et migrée sur", dsn)
 }

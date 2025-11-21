@@ -11,12 +11,10 @@ import (
 	"github.com/otiai10/gosseract/v2"
 )
 
-// SaveBytesToFile écrit des bytes dans un fichier
 func SaveBytesToFile(b []byte, path string) error {
 	return os.WriteFile(path, b, 0644)
 }
 
-// ConvertPDFToPNGs convertit un PDF en images PNG via pdftoppm
 func ConvertPDFToPNGs(pdfPath string, outDir string) ([]string, error) {
 	if err := os.MkdirAll(outDir, 0755); err != nil {
 		return nil, err

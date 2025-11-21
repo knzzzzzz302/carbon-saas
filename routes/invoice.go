@@ -23,6 +23,7 @@ func uploadInvoice(c *fiber.Ctx) error {
 	}
 
 	userID := c.Locals("user_id").(uint)
+	tenantID := c.Locals("tenant_id").(uint)
 
 	// Simulation analyse (à améliorer avec OCR)
 	amount := 100.0 + rand.Float64()*900.0
@@ -30,6 +31,7 @@ func uploadInvoice(c *fiber.Ctx) error {
 
 	inv := models.Invoice{
 		UserID:       userID,
+		TenantID:     tenantID,
 		FileName:     file.Filename,
 		OriginalName: file.Filename,
 		TotalAmount:  amount,
@@ -47,7 +49,8 @@ func uploadInvoice(c *fiber.Ctx) error {
 
 func getInvoices(c *fiber.Ctx) error {
 	userID := c.Locals("user_id").(uint)
+	tenantID := c.Locals("tenant_id").(uint)
 	var invoices []models.Invoice
-	database.DB.Where("user_id = ?", userID).Order("created_at DESC").Find(&invoices)
+	database.DB.Where("user_id = ? AND tenant_id = ?", userID, tenantID).Order("created_at DESC").Find(&invoices)
 	return c.JSON(fiber.Map{"invoices": invoices})
 }

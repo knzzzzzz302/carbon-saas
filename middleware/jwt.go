@@ -23,7 +23,23 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		return c.Status(401).JSON(fiber.Map{"error": "Token invalide"})
 	}
 
-	claims := token.Claims.(jwt.MapClaims)
-	c.Locals("user_id", uint(claims["user_id"].(float64)))
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return c.Status(401).JSON(fiber.Map{"error": "Claims invalides"})
+	}
+
+	userID, ok := claims["user_id"].(float64)
+	if !ok {
+		return c.Status(401).JSON(fiber.Map{"error": "Utilisateur manquant"})
+	}
+	tenantID, ok := claims["tenant_id"].(float64)
+	if !ok {
+		return c.Status(401).JSON(fiber.Map{"error": "Tenant manquant"})
+	}
+	role, _ := claims["role"].(string)
+
+	c.Locals("user_id", uint(userID))
+	c.Locals("tenant_id", uint(tenantID))
+	c.Locals("role", role)
 	return c.Next()
 }
