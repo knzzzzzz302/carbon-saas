@@ -1,0 +1,56 @@
+.ct-panel {
+  background: rgba(4, 27, 15, 0.9);
+  border: 1px solid rgba(69, 211, 158, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  color: #e9f5ee;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ct-panel header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ct-panel h3 {
+  margin: 0;
+}
+
+.ct-pill {
+  background: rgba(69, 211, 158, 0.2);
+  border: 1px solid rgba(69, 211, 158, 0.4);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.ct-narrative {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ct-placeholder {
+  margin: 0;
+  color: rgba(233, 245, 238, 0.7);
+  font-style: italic;
+}
+
+.ct-list-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.ct-list-columns h4 {
+  margin-bottom: 6px;
+}
+
+.ct-list-columns ul {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(233, 245, 238, 0.85);
+}
+

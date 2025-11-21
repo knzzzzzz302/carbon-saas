@@ -1,0 +1,47 @@
+.ct-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.ct-stat-card {
+  background: rgba(6, 36, 19, 0.8);
+  border: 1px solid rgba(69, 211, 158, 0.2);
+  border-radius: 14px;
+  padding: 18px;
+  color: #e4f3eb;
+}
+
+.ct-stat-label {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(228, 243, 235, 0.75);
+}
+
+.ct-stat-value {
+  margin: 8px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.ct-skeleton {
+  width: 60%;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  display: inline-block;
+  animation: pulse 1.4s ease infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+

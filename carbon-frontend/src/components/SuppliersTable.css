@@ -1,0 +1,44 @@
+.ct-table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e9f5ee;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+th {
+  font-weight: 600;
+  color: rgba(233, 245, 238, 0.7);
+}
+
+.ct-priority {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.ct-priority.haute {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fecaca;
+}
+
+.ct-priority.moyenne {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fde68a;
+}
+
+.ct-priority.basse {
+  background: rgba(74, 222, 128, 0.2);
+  color: #bbf7d0;
+}
+

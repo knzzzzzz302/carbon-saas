@@ -1,0 +1,61 @@
+.ct-sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #022814 0%, #01190d 100%);
+  color: #e5f4ed;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  gap: 32px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ct-brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ct-logo {
+  font-size: 32px;
+}
+
+.ct-product {
+  font-weight: 700;
+  font-size: 18px;
+  margin: 0;
+}
+
+.ct-tagline {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(229, 244, 237, 0.7);
+}
+
+.ct-nav-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 15px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ct-nav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.ct-logout {
+  margin-top: auto;
+  background: rgba(255, 78, 78, 0.15);
+  color: #ff9090;
+  border: 1px solid rgba(255, 78, 78, 0.4);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+}
+

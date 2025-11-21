@@ -17,18 +17,22 @@ var DB *gorm.DB
 
 func ConnectDB() {
 	dsn := os.Getenv("DATABASE_URL")
-	var dialector gorm.Dialector
+	if dsn == "" {
+		dsn = "carbon.db"
+	}
 
-	switch {
-	case strings.HasPrefix(dsn, "postgres://") || strings.HasPrefix(dsn, "postgresql://"):
+	var dialector gorm.Dialector
+	normalized := strings.ToLower(dsn)
+	isPostgres := strings.HasPrefix(normalized, "postgres://") ||
+		strings.HasPrefix(normalized, "postgresql://") ||
+		strings.Contains(normalized, "host=") ||
+		strings.Contains(normalized, "user=") ||
+		strings.Contains(normalized, "dbname=")
+
+	if isPostgres {
 		dialector = postgres.Open(dsn)
-	case dsn != "":
-		// Assume postgres DSN even without schema prefix
-		dialector = postgres.Open(dsn)
-	default:
-		dbPath := "carbon.db"
-		dialector = sqlite.Open(dbPath)
-		dsn = dbPath
+	} else {
+		dialector = sqlite.Open(dsn)
 	}
 
 	database, err := gorm.Open(dialector, &gorm.Config{
