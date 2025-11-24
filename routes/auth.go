@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"carbon-saas/config"
 	"carbon-saas/database"
 	"carbon-saas/models"
 	"carbon-saas/utils"
@@ -137,7 +138,11 @@ func issueSessionToken(user models.User, membership models.Membership) (string, 
 		"role":      membership.Role,
 		"exp":       time.Now().Add(24 * time.Hour).Unix(),
 	})
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = config.DefaultJWTSecret
+	}
+	return token.SignedString([]byte(secret))
 }
 
 func resolveDefaultMembership(user models.User) (models.Membership, error) {

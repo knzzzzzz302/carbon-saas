@@ -4,6 +4,8 @@ import (
 	"os"
 	"strings"
 
+	"carbon-saas/config"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -16,7 +18,11 @@ func JWTMiddleware(c *fiber.Ctx) error {
 
 	tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
+		secret := os.Getenv("JWT_SECRET")
+		if secret == "" {
+			secret = config.DefaultJWTSecret
+		}
+		return []byte(secret), nil
 	})
 
 	if err != nil || !token.Valid {

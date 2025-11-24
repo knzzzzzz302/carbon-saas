@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"carbon-saas/config"
 )
 
 const (
@@ -75,9 +77,15 @@ type EmbeddingResponse struct {
 func NewClientFromEnv() (*Client, error) {
 	apiKey := os.Getenv("MISTRAL_API_KEY")
 	if apiKey == "" {
+		apiKey = config.DefaultMistralAPIKey
+	}
+	if apiKey == "" {
 		return nil, errors.New("MISTRAL_API_KEY manquant")
 	}
 	agentID := os.Getenv("MISTRAL_AGENT_ID")
+	if agentID == "" {
+		agentID = config.DefaultMistralAgentID
+	}
 	baseURL := os.Getenv("MISTRAL_API_BASE")
 	if baseURL == "" {
 		baseURL = defaultBaseURL

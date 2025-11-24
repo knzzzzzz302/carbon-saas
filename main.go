@@ -43,7 +43,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3030"
+		port = "3060"
 	}
 	log.Println("🚀 Serveur sur http://localhost:" + port)
 	log.Fatal(app.Listen(":" + port))
