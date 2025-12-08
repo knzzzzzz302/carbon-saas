@@ -64,10 +64,13 @@ func getEnv(key, def string) string {
 // NewHTTPServer crée un serveur HTTP configuré.
 func NewHTTPServer(cfg Config, handler http.Handler) *http.Server {
 	return &http.Server{
-		Addr:           cfg.HTTPAddr(),
-		Handler:        handler,
-		ReadTimeout:    15 * time.Second,
-		WriteTimeout:   15 * time.Second,
+		Addr:    cfg.HTTPAddr(),
+		Handler: handler,
+		// On laisse des marges plus larges pour les appels IA (Mistral)
+		// qui peuvent prendre plusieurs dizaines de secondes sur des
+		// questions complexes.
+		ReadTimeout:    75 * time.Second,
+		WriteTimeout:   75 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 }

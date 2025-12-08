@@ -42,7 +42,10 @@ type authResponse struct {
 func (h *AuthHandler) SignUp(c *gin.Context) {
 	var req signUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "payload invalide", "details": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Les informations fournies sont invalides. Vérifie l'email et le mot de passe (au moins 8 caractères).",
+			"details": err.Error(),
+		})
 		return
 	}
 
@@ -99,7 +102,10 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req loginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "payload invalide", "details": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Les informations de connexion sont invalides. Vérifie le format de l'email et le mot de passe.",
+			"details": err.Error(),
+		})
 		return
 	}
 

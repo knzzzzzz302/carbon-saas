@@ -51,6 +51,20 @@ CREATE TABLE IF NOT EXISTS factors (
     version    TEXT NOT NULL DEFAULT 'v1'
 );
 
+-- Documents (factures, contrats énergie, etc.) liés au tenant.
+CREATE TABLE IF NOT EXISTS documents (
+    id           BIGSERIAL PRIMARY KEY,
+    tenant_id    BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    original_name TEXT NOT NULL,
+    mime_type    TEXT NOT NULL,
+    size_bytes   BIGINT NOT NULL,
+    storage_path TEXT NOT NULL,
+    source       TEXT,               -- ex: "EDF", "GRDF", "Fournisseur X"
+    kind         TEXT,               -- ex: "facture_energie", "facture_transport"
+    analysis     JSONB,              -- future analyse IA (facteurs, kWh, postes, etc.)
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS billing (
     sub_id             TEXT PRIMARY KEY,
     tenant_id          BIGINT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,

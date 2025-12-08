@@ -44,3 +44,16 @@ type Emission struct {
 	MethodologyVersion string    `db:"methodology_version"`
 	ComputedAt         time.Time `db:"computed_at"`
 }
+
+// Document représente un document importé (facture EDF, contrat énergie, etc.).
+type Document struct {
+	ID           int64     `db:"id"`
+	TenantID     int64     `db:"tenant_id"`
+	OriginalName string    `db:"original_name"`
+	MimeType     string    `db:"mime_type"`
+	SizeBytes    int64     `db:"size_bytes"`
+	StoragePath  string    `db:"storage_path"`
+	Source       *string   `db:"source"`
+	Kind         *string   `db:"kind"`
+	CreatedAt    time.Time `db:"created_at"`
+}

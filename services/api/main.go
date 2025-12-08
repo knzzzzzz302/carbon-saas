@@ -44,6 +44,7 @@ func main() {
 	authHandler := NewAuthHandler(db, cfg)
 	entriesHandler := NewEntriesHandler(db)
 	carbonHandler := NewCarbonHandler(db)
+	documentsHandler := NewDocumentsHandler(db)
 	api := router.Group("/api")
 	{
 		auth := api.Group("/auth")
@@ -58,6 +59,10 @@ func main() {
 			tenants.POST("/:tenantId/entries", entriesHandler.CreateEntry)
 			tenants.GET("/:tenantId/entries", entriesHandler.ListEntries)
 			tenants.POST("/:tenantId/import", entriesHandler.ImportCSV)
+
+			// Documents (factures, contrats énergie, etc.) liés à un tenant
+			tenants.POST("/:tenantId/documents", documentsHandler.UploadDocument)
+			tenants.GET("/:tenantId/documents", documentsHandler.ListDocuments)
 
 			// Endpoints MVP carbone multi-tenant
 			tenants.POST("/:tenantId/entries/:entryId/compute-emission", carbonHandler.ComputeEmissionForEntry)
